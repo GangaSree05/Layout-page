@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    body{
+        margin:0;
+        background-color: rgb(235, 16, 100);
+        font-family:Arial, Helvetica, sans-serif;
+    }
+    main{
+        display: grid;
+        grid-template-columns: 50% 50%;
+        margin-top: 90px;
+        margin-left: 300px;
+        margin-right: 300px;
+        height:70vh; 
+    }
+    .player--0{
+        background-color: pink;
+        text-align: center;
+        padding-top: 30px;
+        border-top-left-radius:20px;
+        border-bottom-left-radius: 20px;
+    }
+    .player--1{
+        background-color: rgb(228, 136, 166);
+        text-align: center;
+        padding-top: 30px;
+        border-top-right-radius:20px;
+        border-bottom-right-radius: 20px;
+    }
+    .current{
+        background-color:rgb(235, 16, 100) ;
+        width:150px;
+        padding: 3px;
+        margin-left:120px;
+        margin-top:100px;
+        border-radius: 10px;
+        color: white;
+    }
+    .current-score{
+        font-size:20px;
+        font-weight: bold;
+    }
+    .score{
+        color:rgb(235, 16, 100);
+        font-size: 50px;
+    }
+    .layer{
+        display: flex;
+        flex-direction: column;
+        width:100px;
+        gap:20px;
+        margin-top: -300px;
+        margin-left: 418px;
+
+    }
+    .layer button{
+        border: none;
+        border-radius: 20px;
+        opacity: 50%;
+        cursor: pointer;
+        
+    }
+    </style>
+</head>
+<body>
+    <main>
+    <section class="player player--0">
+        <h2 class="name" id="name--0">PLAYER 1</h2>
+        <p class="score" id="score--0">0</p>
+        <div class="current">
+            <p class="current-label">CURRENT</p>
+            <p class="current-score" id="current--0">2</p>
+        </div>
+    </section>
+    <section class="player player--1">
+        <h2 class="name" id="name--1">PLAYER 2</h2>
+        <p class="score" id="score--1">0</p>
+        <div class="current">
+            <p class="current-label">CURRENT</p>
+            <p class="current-score" id="current--1">0</p>
+        </div>
+    </section>
+    <section class="layer">
+        <button>NEW GAME</button>
+        <img src="1 dice.jpg">
+        <button >ROLL DICE</button>
+        <button >HOLD</button>
+    </section>
+    </main>
+    <script>
+       
+let scores, currentScore, activePlayer, playing;
+
+const btnNew = document.querySelector('.layer button:nth-child(1)');
+const btnRoll = document.querySelector('.layer button:nth-child(3)');
+const btnHold = document.querySelector('.layer button:nth-child(4)');
+const diceImg = document.querySelector('.layer img');
+
+
+const score0El = document.getElementById('score--0');
+const score1El = document.getElementById('score--1');
+const current0El = document.getElementById('current--0');
+const current1El = document.getElementById('current--1');
+const player0El = document.querySelector('.player--0');
+const player1El = document.querySelector('.player--1');
+
+function init() {
+    scores = [0, 0];
+    currentScore = 0;
+    activePlayer = 0;
+    playing = true;
+    score0El.textContent = 0;
+    score1El.textContent = 0;
+    current0El.textContent = 0;
+    current1El.textContent = 0;
+    player0El.style.opacity = 1;
+    player1El.style.opacity = 1;
+    player0El.style.fontWeight = 'bold';
+    player1El.style.fontWeight = 'normal';
+    diceImg.style.display = 'none';
+}
+init();
+
+function switchPlayer() {
+    document.getElementById(`current--${activePlayer}`).textContent = 0;
+    currentScore = 0;
+    activePlayer = activePlayer === 0 ? 1 : 0;
+    player0El.style.fontWeight = activePlayer === 0 ? 'bold' : 'normal';
+    player1El.style.fontWeight = activePlayer === 1 ? 'bold' : 'normal';
+}
+
+btnRoll.addEventListener('click', function () {
+    if (playing) {
+        const dice = Math.trunc(Math.random() * 6) + 1;
+        diceImg.style.display = 'block';
+        diceImg.src = dice + ' dice.jpg';
+        if (dice !== 1) {
+            currentScore += dice;
+            document.getElementById(`current--${activePlayer}`).textContent = currentScore;
+        } else {
+            switchPlayer();
+        }
+    }
+});
+
+btnHold.addEventListener('click', function () {
+    if (playing) {
+        scores[activePlayer] += currentScore;
+        document.getElementById(`score--${activePlayer}`).textContent = scores[activePlayer];
+        if (scores[activePlayer] >= 100) {
+            playing = false;
+            diceImg.style.display = 'none';
+            document.getElementById(`name--${activePlayer}`).textContent = 'WINNER!';
+            if (activePlayer === 0) {
+                player0El.style.opacity = 0.7;
+            } else {
+                player1El.style.opacity = 0.7;
+            }
+        } else {
+            switchPlayer();
+        }
+    }
+});
+btnNew.addEventListener('click', function () {
+    document.getElementById('name--0').textContent = 'PLAYER 1';
+    document.getElementById('name--1').textContent = 'PLAYER 2';
+    init();
+});
+    </script>
+</body>
+</html>
